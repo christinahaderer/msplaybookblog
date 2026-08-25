@@ -5,13 +5,13 @@
  */
 
 :root {
-	--accent: #2337ff;
-	--accent-dark: #000d8a;
-	--black: 15, 18, 25;
-	--gray: 96, 115, 159;
-	--gray-light: 229, 233, 240;
-	--gray-dark: 34, 41, 57;
-	--gray-gradient: rgba(var(--gray-light), 50%), #fff;
+	--accent: #b1503a;
+	--accent-dark: #7a3524;
+	--black: 43, 32, 27;
+	--gray: 143, 118, 106;
+	--gray-light: 241, 231, 220;
+	--gray-dark: 66, 48, 41;
+	--gray-gradient: rgba(var(--gray-light), 50%), #fdfbf8;
 	--box-shadow:
 		0 2px 6px rgba(var(--gray), 25%), 0 8px 24px rgba(var(--gray), 33%),
 		0 16px 32px rgba(var(--gray), 33%);
