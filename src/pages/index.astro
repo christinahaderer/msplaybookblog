@@ -2,33 +2,139 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
+import FormattedDate from '../components/FormattedDate.astro';
 import { SITE_TITLE, SITE_DESCRIPTION } from '../consts';
+import { getCollection } from 'astro:content';
+
+const posts = (await getCollection('blog'))
+	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+	.slice(0, 3);
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<style>
+			main {
+				width: 1000px;
+			}
+			.hero-banner {
+				position: relative;
+				border-radius: var(--radius);
+				overflow: hidden;
+				box-shadow: var(--box-shadow);
+			}
+			.hero-banner img {
+				width: 100%;
+				aspect-ratio: 16 / 8.5;
+				object-fit: cover;
+				display: block;
+			}
+			.hero-overlay {
+				position: absolute;
+				inset: 0;
+				display: flex;
+				align-items: flex-start;
+				justify-content: center;
+				padding: 3em 1.5em 0 1.5em;
+			}
+			.hero-overlay .scrim {
+				background: rgba(253, 250, 244, 0.88);
+				backdrop-filter: blur(2px);
+				border-radius: var(--radius);
+				padding: 1.1em 1.6em;
+				max-width: 28em;
+				text-align: center;
+			}
+			.hero-overlay h1 {
+				margin: 0.2em 0 0.35em 0;
+				font-size: 1.5em;
+			}
+			.hero-overlay .lede {
+				margin: 0;
+				color: rgb(var(--gray-dark));
+				font-size: 0.9em;
+			}
+			.latest {
+				margin-top: 2.5rem;
+			}
+			.latest h2 {
+				text-align: center;
+				margin-bottom: 1.5rem;
+			}
+			.view-all {
+				display: block;
+				text-align: center;
+				margin-top: 2em;
+			}
+			@media (max-width: 720px) {
+				.hero-banner img {
+					aspect-ratio: 4 / 5;
+				}
+				.hero-overlay {
+					padding-top: 1.5em;
+				}
+				.hero-overlay h1 {
+					font-size: 1.2em;
+				}
+				.hero-overlay .scrim {
+					padding: 0.9em 1.1em;
+				}
+				.latest {
+					margin-top: 1.75rem;
+				}
+			}
+		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
-			<h1>Welcome to MS Playbook</h1>
-			<p>
-				Hi, I'm Christina. This is where I'm writing about life with MS — the good days, the hard
-				ones, and the small strategies I pick up along the way. Think of it less as a polished
-				diary and more as a playbook I'm building in real time, one entry at a time.
-			</p>
-			<p>
-				I started this blog because I couldn't find enough honest, ordinary accounts of what this
-				actually looks like day to day, and I wanted to be one more voice adding to that. If
-				you're here because you're navigating something similar, I hope you find something useful
-				— or at least something that makes you feel less alone in it.
-			</p>
-			<p>
-				Head over to the <a href="/blog">blog</a> to read the latest, or visit
-				<a href="/about">about</a> to learn a bit more about me.
-			</p>
+			<section class="hero-banner">
+				<img
+					src="/heropic.jpg"
+					alt="Two people walking a mountain trail together"
+					width="1920"
+					height="1275"
+				/>
+				<div class="hero-overlay">
+					<div class="scrim">
+						<span class="eyebrow">MS Playbook</span>
+						<h1>A practical playbook for living <span class="highlight">well</span> with MS</h1>
+						<p class="lede">Insights, support, and honest updates from my own journey with MS.</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="latest">
+				<h2>Latest from the Playbook</h2>
+				<ul class="post-grid">
+					{
+						posts.map((post, i) => (
+							<li class="post-card">
+								<div class="post-card-media">
+									{post.data.heroImage && <img src={post.data.heroImage} alt="" />}
+									<span class="badge-num">{i + 1}</span>
+								</div>
+								<div class="post-card-body">
+									<p class="date eyebrow">
+										<FormattedDate date={post.data.pubDate} />
+									</p>
+									<h3 class="title">
+										<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+									</h3>
+									<p class="description">{post.data.description}</p>
+									<p class="byline">Author: Christina</p>
+									<a class="btn" href={`/blog/${post.id}/`}>
+										Read More
+									</a>
+								</div>
+							</li>
+						))
+					}
+				</ul>
+				<a class="view-all" href="/blog">View all posts in the Playbook →</a>
+			</section>
 		</main>
 		<Footer />
 	</body>

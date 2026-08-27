@@ -3,13 +3,30 @@ const today = new Date();
 ---
 
 <footer>
-	&copy; {today.getFullYear()} Christina. Written with hope, one entry at a time.
+	<span class="eyebrow">Stronger Together</span>
+	<p>&copy; {today.getFullYear()} Christina. Written with hope, one entry at a time.</p>
+	<a class="rss-link" href="/rss.xml">Subscribe via RSS</a>
 </footer>
 <style>
 	footer {
-		padding: 2em 1em 6em 1em;
-		background: linear-gradient(var(--gray-gradient)) no-repeat;
+		padding: 2.5em 1em 6em 1em;
+		margin-top: 2em;
+		background: #f0ece9;
+		border-top: 2px solid var(--accent);
 		color: rgb(var(--gray));
 		text-align: center;
+	}
+	footer .eyebrow {
+		margin-bottom: 0.5em;
+	}
+	footer p {
+		margin: 0;
+		font-size: 0.9em;
+	}
+	footer .rss-link {
+		display: inline-block;
+		margin-top: 0.75em;
+		font-size: 0.85em;
+		color: var(--accent-dark);
 	}
 </style>

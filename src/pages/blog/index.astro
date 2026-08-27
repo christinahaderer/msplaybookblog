@@ -16,77 +16,40 @@ const posts = (await getCollection('blog')).sort(
 	<head>
 		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
 		<style>
-			ul {
-				display: flex;
-				flex-direction: column;
-				gap: 2rem;
-				list-style-type: none;
-				margin: 0;
-				padding: 0;
+			main {
+				width: 960px;
 			}
-			ul li {
-				width: 100%;
-				max-width: 720px;
-				border-bottom: 1px solid rgb(var(--gray-light));
-				padding-bottom: 1.5rem;
-			}
-			ul li * {
-				text-decoration: none;
-				transition: 0.2s ease;
-			}
-			ul li img {
-				margin-bottom: 0.5rem;
-				border-radius: 12px;
-				width: 100%;
-			}
-			ul li a {
-				display: block;
-			}
-			.description {
-				margin: 0.25rem 0 0 0;
-				color: rgb(var(--gray-dark));
-			}
-			.title {
-				margin: 0;
-				color: rgb(var(--black));
-				line-height: 1;
-			}
-			.date {
-				margin: 0;
-				color: rgb(var(--gray));
-			}
-			ul li a:hover h4,
-			ul li a:hover .date {
-				color: rgb(var(--accent));
-			}
-			ul a:hover img {
-				box-shadow: var(--box-shadow);
-			}
-			@media (max-width: 720px) {
-				ul {
-					gap: 1.25em;
-				}
+			h1 {
+				margin-bottom: 1.5rem;
 			}
 		</style>
 	</head>
 	<body>
 		<Header />
 		<main>
+			<h1>The Playbook</h1>
 			<section>
-				<ul>
+				<ul class="post-grid">
 					{
-						posts.map((post) => (
-							<li>
-								<a href={`/blog/${post.id}/`}>
-									{post.data.heroImage && (
-										<img width={720} height={360} src={post.data.heroImage} alt="" />
-									)}
-									<h4 class="title">{post.data.title}</h4>
-									<p class="date">
+						posts.map((post, i) => (
+							<li class="post-card">
+								<div class="post-card-media">
+									{post.data.heroImage && <img src={post.data.heroImage} alt="" />}
+									<span class="badge-num">{i + 1}</span>
+								</div>
+								<div class="post-card-body">
+									<p class="date eyebrow">
 										<FormattedDate date={post.data.pubDate} />
 									</p>
+									<h4 class="title">
+										<a href={`/blog/${post.id}/`}>{post.data.title}</a>
+									</h4>
 									<p class="description">{post.data.description}</p>
-								</a>
+									<p class="byline">Author: Christina</p>
+									<a class="btn" href={`/blog/${post.id}/`}>
+										Read More
+									</a>
+								</div>
 							</li>
 						))
 					}

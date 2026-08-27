@@ -5,43 +5,105 @@ import { SITE_TITLE } from '../consts';
 
 <header>
 	<nav>
-		<h2><a href="/">{SITE_TITLE}</a></h2>
+		<a href="/" class="brand">
+			<img
+				src="/logo-icon.png"
+				alt={SITE_TITLE}
+				class="logo-mark"
+				onerror="this.style.display='none'"
+			/>
+			<span class="wordmark">Playbook</span>
+		</a>
 		<div class="internal-links">
 			<HeaderLink href="/">Home</HeaderLink>
+			<span class="sep" aria-hidden="true">✳</span>
 			<HeaderLink href="/blog">Blog</HeaderLink>
+			<span class="sep" aria-hidden="true">✳</span>
 			<HeaderLink href="/about">About</HeaderLink>
 		</div>
+		<a class="btn subscribe" href="/rss.xml" title="Subscribe via RSS">Subscribe</a>
 	</nav>
 </header>
 <style>
 	header {
 		margin: 0;
 		padding: 0 1em;
-		background: #fdfbf8;
-		box-shadow: 0 2px 8px rgba(var(--black), 5%);
-	}
-	h2 {
-		margin: 0;
-		font-size: 1em;
-	}
-
-	h2 a,
-	h2 a.active {
-		text-decoration: none;
+		background: #f0ece9;
+		border-bottom: 1px solid rgba(var(--black), 12%);
 	}
 	nav {
 		display: flex;
 		align-items: center;
 		justify-content: space-between;
+		gap: 1em;
 	}
-	nav a {
-		padding: 1em 0.5em;
-		color: var(--black);
-		border-bottom: 4px solid transparent;
+	.brand {
+		display: flex;
+		align-items: center;
+		gap: 0.6em;
 		text-decoration: none;
+		padding: 0.85em 0;
 	}
-	nav a.active {
+	.logo-mark {
+		height: 34px;
+		width: auto;
+		border-radius: 0;
+	}
+	.wordmark {
+		font-family: var(--font-display);
+		font-weight: 600;
+		font-size: 1.2em;
+		letter-spacing: 0.02em;
+		color: rgb(var(--black));
+	}
+	nav .internal-links {
+		display: flex;
+		align-items: center;
+		gap: 0.9em;
+	}
+	nav .internal-links .sep {
+		color: var(--accent);
+		font-size: 0.7em;
+	}
+	nav .internal-links :global(a) {
+		padding: 0.4em 0;
+		color: rgb(var(--gray-dark));
 		text-decoration: none;
-		border-bottom-color: var(--accent);
+		font-family: "Cormorant Garamond", var(--font-display), serif;
+		font-weight: 600;
+		font-size: 0.95em;
+		letter-spacing: 0.14em;
+		text-transform: uppercase;
+		border-bottom: 1px solid transparent;
+		transition:
+			color 0.15s ease,
+			border-color 0.15s ease;
+	}
+	nav .internal-links :global(a:hover) {
+		color: var(--accent-dark);
+		border-color: rgba(var(--black), 40%);
+	}
+	nav .internal-links :global(a.active) {
+		color: var(--accent-dark);
+		border-color: var(--accent);
+	}
+	.subscribe {
+		flex-shrink: 0;
+	}
+	@media (max-width: 620px) {
+		.subscribe {
+			display: none;
+		}
+	}
+	@media (max-width: 480px) {
+		.wordmark {
+			font-size: 1em;
+		}
+		nav .internal-links {
+			gap: 0.5em;
+		}
+		nav .internal-links .sep {
+			display: none;
+		}
 	}
 </style>
