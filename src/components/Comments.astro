@@ -1,0 +1,241 @@
+---
+interface Props {
+	slug: string;
+}
+const { slug } = Astro.props;
+---
+
+<section class="comments" data-slug={slug}>
+	<h2>Comments</h2>
+	<div class="comment-list" id="comment-list">
+		<p class="comment-empty">Loading comments…</p>
+	</div>
+	<form class="comment-form" id="comment-form">
+		<div class="comment-field">
+			<label for="comment-name">Name</label>
+			<input type="text" id="comment-name" name="name" maxlength="60" required />
+		</div>
+		<div class="comment-field">
+			<label for="comment-message">Comment</label>
+			<textarea id="comment-message" name="message" rows="4" maxlength="2000" required></textarea>
+		</div>
+		<div class="comment-honeypot" aria-hidden="true">
+			<label for="comment-website">Website</label>
+			<input type="text" id="comment-website" name="website" tabindex="-1" autocomplete="off" />
+		</div>
+		<p class="comment-status" id="comment-status" role="status"></p>
+		<button type="submit" class="btn">Post Comment</button>
+	</form>
+</section>
+
+<style>
+	.comments {
+		margin-top: 3em;
+		padding-top: 2em;
+		border-top: 1px solid rgba(var(--black), 14%);
+	}
+	.comments h2 {
+		margin-bottom: 1em;
+	}
+	.comment-list {
+		display: flex;
+		flex-direction: column;
+		gap: 1.25em;
+		margin-bottom: 2em;
+	}
+	.comment-empty {
+		color: rgb(var(--gray));
+		font-style: italic;
+	}
+	.comment {
+		background: #fffdf8;
+		border: 1px solid rgba(var(--black), 10%);
+		border-radius: var(--radius);
+		padding: 1em 1.25em;
+	}
+	.comment-meta {
+		display: flex;
+		justify-content: space-between;
+		align-items: baseline;
+		gap: 1em;
+		margin-bottom: 0.4em;
+	}
+	.comment-name {
+		font-family: var(--font-display);
+		font-weight: 600;
+		color: rgb(var(--black));
+	}
+	.comment-date {
+		font-size: 0.8em;
+		color: rgb(var(--gray));
+	}
+	.comment-message {
+		margin: 0;
+		white-space: pre-wrap;
+	}
+	.comment-form {
+		display: flex;
+		flex-direction: column;
+		gap: 1em;
+		max-width: 34em;
+	}
+	.comment-field {
+		display: flex;
+		flex-direction: column;
+		gap: 0.35em;
+	}
+	.comment-field label {
+		font-family: "Cormorant Garamond", var(--font-display), serif;
+		font-weight: 600;
+		font-size: 0.85em;
+		letter-spacing: 0.1em;
+		text-transform: uppercase;
+		color: rgb(var(--gray));
+	}
+	.comment-field input,
+	.comment-field textarea {
+		font-family: "Atkinson", sans-serif;
+		font-size: 1em;
+		padding: 0.6em 0.8em;
+		border: 1px solid rgba(var(--black), 20%);
+		border-radius: var(--radius);
+		background: #fffdf8;
+		color: rgb(var(--gray-dark));
+	}
+	.comment-field textarea {
+		resize: vertical;
+	}
+	.comment-honeypot {
+		position: absolute;
+		left: -9999px;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+	}
+	.comment-form .btn {
+		align-self: flex-start;
+		border: none;
+		cursor: pointer;
+	}
+	.comment-status {
+		margin: 0;
+		font-size: 0.9em;
+		min-height: 1.2em;
+	}
+	.comment-status.error {
+		color: var(--coral);
+	}
+	.comment-status.success {
+		color: var(--sage);
+	}
+</style>
+
+<script define:vars={{ slug }}>
+	const listEl = document.getElementById('comment-list');
+	const formEl = document.getElementById('comment-form');
+	const statusEl = document.getElementById('comment-status');
+
+	function formatDate(iso) {
+		try {
+			return new Date(iso).toLocaleDateString(undefined, {
+				year: 'numeric',
+				month: 'short',
+				day: 'numeric',
+			});
+		} catch {
+			return '';
+		}
+	}
+
+	function renderComments(comments) {
+		listEl.innerHTML = '';
+		if (!comments || comments.length === 0) {
+			const empty = document.createElement('p');
+			empty.className = 'comment-empty';
+			empty.textContent = 'Be the first to leave a comment.';
+			listEl.appendChild(empty);
+			return;
+		}
+		comments.forEach((c) => {
+			const card = document.createElement('div');
+			card.className = 'comment';
+
+			const meta = document.createElement('div');
+			meta.className = 'comment-meta';
+
+			const name = document.createElement('span');
+			name.className = 'comment-name';
+			name.textContent = c.name;
+
+			const date = document.createElement('span');
+			date.className = 'comment-date';
+			date.textContent = formatDate(c.date);
+
+			meta.appendChild(name);
+			meta.appendChild(date);
+
+			const message = document.createElement('p');
+			message.className = 'comment-message';
+			message.textContent = c.message;
+
+			card.appendChild(meta);
+			card.appendChild(message);
+			listEl.appendChild(card);
+		});
+	}
+
+	async function loadComments() {
+		try {
+			const res = await fetch(`/api/comments/${encodeURIComponent(slug)}`);
+			const data = await res.json();
+			renderComments(data.comments);
+		} catch {
+			listEl.innerHTML = '';
+			const err = document.createElement('p');
+			err.className = 'comment-empty';
+			err.textContent = "Couldn't load comments right now.";
+			listEl.appendChild(err);
+		}
+	}
+
+	formEl?.addEventListener('submit', async (e) => {
+		e.preventDefault();
+		statusEl.textContent = '';
+		statusEl.className = 'comment-status';
+
+		const formData = new FormData(formEl);
+		const payload = {
+			name: formData.get('name'),
+			message: formData.get('message'),
+			website: formData.get('website'),
+		};
+
+		const submitBtn = formEl.querySelector('button[type="submit"]');
+		submitBtn.disabled = true;
+
+		try {
+			const res = await fetch(`/api/comments/${encodeURIComponent(slug)}`, {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify(payload),
+			});
+			const data = await res.json();
+			if (!res.ok) {
+				throw new Error(data.error || 'Something went wrong.');
+			}
+			if (data.comments) {
+				renderComments(data.comments);
+			}
+			formEl.reset();
+			statusEl.textContent = 'Thanks for your comment!';
+			statusEl.className = 'comment-status success';
+		} catch (err) {
+			statusEl.textContent = err.message || 'Something went wrong. Please try again.';
+			statusEl.className = 'comment-status error';
+		} finally {
+			submitBtn.disabled = false;
+		}
+	});
+
+	loadComments();
+</script>

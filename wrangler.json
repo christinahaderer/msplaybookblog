@@ -10,5 +10,12 @@
 	"observability": {
 		"enabled": true
 	},
-	"upload_source_maps": true
+	"upload_source_maps": true,
+	"kv_namespaces": [
+		{
+			"binding": "COMMENTS",
+			"id": "815d25b003e1460fb81dcd2b28ec66cd",
+			"preview_id": "815d25b003e1460fb81dcd2b28ec66cd"
+		}
+	]
 }
