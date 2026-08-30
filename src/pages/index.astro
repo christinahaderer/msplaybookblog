@@ -9,12 +9,24 @@ import { getCollection } from 'astro:content';
 const posts = (await getCollection('blog'))
 	.sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
 	.slice(0, 3);
+
+const jsonLd = {
+	'@context': 'https://schema.org',
+	'@type': 'WebSite',
+	name: SITE_TITLE,
+	description: SITE_DESCRIPTION,
+	url: Astro.site?.toString(),
+	author: {
+		'@type': 'Person',
+		name: 'Christina',
+	},
+};
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
-		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} />
+		<BaseHead title={SITE_TITLE} description={SITE_DESCRIPTION} jsonLd={jsonLd} />
 		<style>
 			main {
 				width: 1000px;
